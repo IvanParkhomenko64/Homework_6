@@ -37,7 +37,7 @@ class Product(models.Model):
 class Contacts(models.Model):
     name = models.CharField(max_length=100, verbose_name='Имя')
     phone = models.CharField(max_length=100, verbose_name='Телефон')
-    message = models.TextField(verbose_name='Сообщение')
+    message = models.TextField(verbose_name='Сообщение', **NULLABLE)
 
     def __str__(self):
         return f'{self.name}'
