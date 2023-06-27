@@ -7,7 +7,7 @@ from catalog.models import Category, Product
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        # with open('.\data.json', 'r') as f:
+        # with open('./data.json', 'r') as f:
         #     data_list = json.load(f)
         # print(data_list)
         category_list = [
