@@ -1,0 +1,28 @@
+{% extends 'catalog/base.html' %}
+{%load my_tags%}
+{% block content1 %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Статья</h1>
+</div>
+{% endblock %}
+{% block content2 %}
+    <div class="row text-center">
+        <div class="col-10">
+            <div class="card mb-4 box-shadow">
+                <div class="card-header">
+                    <h4 class="my-0 font-weight-normal">{{object.title}}</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                        <p>{{object.body}}</p>
+                        <li>Опубликовано или нет: {{object.is_published}}</li>
+                        <li>Дата создания: {{object.date_of_creation}}</li>
+                        <li>Количество просмотров: {{object.views_count}}</li>
+                        <li>Slug: {{object.slug}}</li>
+                        <img src="{% mediapath object.image %}" width="189" height="255" alt="lorem" />
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
