@@ -27,7 +27,8 @@ class ProductListView(ListView):
         for product in queryset:
             version = product.version_set.all().filter(version_is_active=True).first()
             product.version = version
-
+        if self.request.user.is_anonymous:
+            queryset = []
         return queryset
 
 
@@ -56,6 +57,7 @@ class ProductCreateView(CreateView):
 
         if formset.is_valid():
             formset.instance = self.object
+            self.object.owner = self.request.user
             formset.save()
 
         return super().form_valid(form)
@@ -90,8 +92,6 @@ class ProductUpdateView(UpdateView):
             formset.save()
 
         return super().form_valid(form)
-
-
 
 
 # def contacts(request):

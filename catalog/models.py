@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 import datetime
 
@@ -24,6 +25,7 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name='Цена за покупку')
     date_of_creation = models.DateTimeField(verbose_name='Дата создания', null=True, default=datetime.datetime.now())
     last_modified_date = models.DateTimeField(verbose_name='Дата последнего изменения', null=True, default=datetime.datetime.now())
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='владелец')
 
     def __str__(self):
         return f'{self.name} {self.description}'
