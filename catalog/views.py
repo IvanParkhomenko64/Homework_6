@@ -1,8 +1,10 @@
+from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 
-from catalog.models import Product, Category, Contacts
+from catalog.forms import ProductForm, VersionForm
+from catalog.models import Product, Category, Contacts, Version
 
 
 # def home(request):
@@ -18,6 +20,78 @@ from catalog.models import Product, Category, Contacts
 class ProductListView(ListView):
     model = Product
     template_name = 'catalog/home.html'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        for product in queryset:
+            version = product.version_set.all().filter(version_is_active=True).first()
+            product.version = version
+
+        return queryset
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ProductFormset = inlineformset_factory(
+            Product, Version, form=VersionForm, extra=1)
+
+        if self.request.method == 'POST':
+            context['formset'] = ProductFormset(
+                self.request.POST, instance=self.object)
+        else:
+            context['formset'] = ProductFormset(instance=self.object)
+
+        return context
+
+    def form_valid(self, form):
+
+        formset = self.get_context_data()['formset']
+        self.object = form.save()
+
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+
+        return super().form_valid(form)
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy('catalog:home')
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        ProductFormset = inlineformset_factory(
+            Product, Version, form=VersionForm, extra=1)
+
+        if self.request.method == 'POST':
+            context['formset'] = ProductFormset(
+                self.request.POST, instance=self.object)
+        else:
+            context['formset'] = ProductFormset(instance=self.object)
+
+        return context
+
+    def form_valid(self, form):
+
+        formset = self.get_context_data()['formset']
+        self.object = form.save()
+
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+
+        return super().form_valid(form)
+
+
 
 
 # def contacts(request):

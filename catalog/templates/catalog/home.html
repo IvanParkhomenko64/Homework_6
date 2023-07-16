@@ -3,8 +3,8 @@
 {% block content1 %}
 
 <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-    <h1 class="display-4">Skystore</h1>
-    <p class="lead">Главная страница</p>
+    <h1 class="display-4">Главная страница</h1>
+    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'catalog:create' %}">Добавить продукт</a>
 </div>
 {% endblock %}
 {% block content2 %}
@@ -19,9 +19,11 @@
                 <h1 class="card-title pricing-card-title">{{object.price}} руб.</h1>
                 <ul class="list-unstyled mt-3 mb-4 text-start m-3">
                     <li>{{object.description}}</li>
+                    <li>Номер версии: {{object.version.version_name}}</li>
                     <img src="{% mediapath object.image %}" width="189" height="255" alt="lorem"/>
                 </ul>
-                <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'catalog:product' object.pk %}">Купить</a>
+                <a class="btn btn-lg btn-block btn-outline-primary"
+                   href="{% url 'catalog:edit' object.pk %}">Изменить</a>
                 <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'catalog:product' object.pk %}">Подробнее</a>
             </div>
         </div>
