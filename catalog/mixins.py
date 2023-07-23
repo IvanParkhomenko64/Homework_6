@@ -1,4 +1,6 @@
 from django.shortcuts import redirect
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 
 class OwnerCheckMixin:
@@ -8,4 +10,10 @@ class OwnerCheckMixin:
                 and not self.request.user.is_superuser:
             return redirect('catalog:home')
 
+        return super().dispatch(request, *args, **kwargs)
+
+
+class CacheViewMixin:
+    @method_decorator(cache_page(30))
+    def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)

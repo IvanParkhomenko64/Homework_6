@@ -10,10 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+from dotenv import load_dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+dot_env_path = os.path.join(BASE_DIR, '.env')
+load_dotenv(dotenv_path=dot_env_path)
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,11 +83,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'catalog_db', # Название БД
-        'USER': 'postgres', # Пользователь для подключения
-        'PASSWORD': '12345', # Пароль для этого пользователя
-        'HOST': '127.0.0.1', # Адрес, на котором развернут сервер БД
-        'PORT': 5432, # Порт, на котором работает сервер БД
+        'NAME': os.getenv('DB_NAME'), # Название БД
+        'USER': os.getenv('DB_USER'), # Пользователь для подключения
+        'PASSWORD': os.getenv('DB_PASSWORD'), # Пароль для этого пользователя
+        'HOST': os.getenv('HOST'), # Адрес, на котором развернут сервер БД
+        'PORT': os.getenv('PORT'), # Порт, на котором работает сервер БД
     }
 }
 
@@ -144,4 +147,14 @@ EMAIL_USE_SSL = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED') == 'True'
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379",
+        }
+    }
 

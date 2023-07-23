@@ -1,12 +1,15 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.core.cache import cache
 from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from catalog.forms import ProductForm, VersionForm
-from catalog.mixins import OwnerCheckMixin
+from catalog.mixins import OwnerCheckMixin, CacheViewMixin
 from catalog.models import Product, Category, Contacts, Version
+from catalog.services import cache_category, category_selection
+from config.settings import CACHE_ENABLED
 
 
 # def home(request):
@@ -117,7 +120,7 @@ class ContactsCreateView(CreateView):
     template_name = 'catalog/contacts.html'
 
 
-class ProductDetailView(PermissionRequiredMixin, DetailView):
+class ProductDetailView(CacheViewMixin, PermissionRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product.html'
     permission_required = 'catalog.view_product'
@@ -138,3 +141,13 @@ class ProductDeleteView(PermissionRequiredMixin, OwnerCheckMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:home')
     permission_required = 'catalog.delete_product'
+
+
+class CategoryListView(ListView):
+    model = Category
+    extra_context = {
+        'is_active_categories': 'active'
+    }
+
+    def get_queryset(self):
+        return cache_category()
