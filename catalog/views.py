@@ -1,9 +1,11 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.forms import inlineformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from catalog.forms import ProductForm, VersionForm
+from catalog.mixins import OwnerCheckMixin
 from catalog.models import Product, Category, Contacts, Version
 
 
@@ -21,6 +23,7 @@ class ProductListView(ListView):
     model = Product
     template_name = 'catalog/home.html'
 
+
     def get_queryset(self):
         queryset = super().get_queryset()
 
@@ -32,10 +35,11 @@ class ProductListView(ListView):
         return queryset
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(PermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.add_product'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,10 +67,11 @@ class ProductCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(PermissionRequiredMixin, OwnerCheckMixin, UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.change_product'
 
     def get_context_data(self, **kwargs):
 
@@ -112,9 +117,11 @@ class ContactsCreateView(CreateView):
     template_name = 'catalog/contacts.html'
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(PermissionRequiredMixin, DetailView):
     model = Product
     template_name = 'catalog/product.html'
+    permission_required = 'catalog.view_product'
+
 
 # def product(request, pk: int):
 #     # category = Category.objects.all()
@@ -126,3 +133,8 @@ class ProductDetailView(DetailView):
 #         'object': products
 #     }
 #     return render(request, 'catalog/product.html', context)
+
+class ProductDeleteView(PermissionRequiredMixin, OwnerCheckMixin, DeleteView):
+    model = Product
+    success_url = reverse_lazy('catalog:home')
+    permission_required = 'catalog.delete_product'

@@ -12,10 +12,10 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        for field_name, field in self.fields.items():
-            if field_name == 'version_is_active':
-                continue
-            field.widget.attrs['class'] = 'form-control'
+        # for field_name, field in self.fields.items():
+        #     if field_name == 'version_is_active':
+        #         continue
+        #     field.widget.attrs['class'] = 'form-control'
 
     def clean_name(self):
         cleaned_data = self.cleaned_data['name']
